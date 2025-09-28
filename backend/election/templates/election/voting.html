@@ -1,0 +1,351 @@
+{% load static custom_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ session.name }} - Voting</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff;
+            color: #333;
+        }
+        .header {
+            background: linear-gradient(to right, #002b5c, #dc3545, #28a745, #dc3545);
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            position: relative;
+        }
+        .header h4 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .header img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+        }
+        .footer {
+            background-color: #002b5c;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .main-content-wrapper {
+            max-width: 1000px; /* Increased container width for 3 cards */
+            margin: 0 auto;
+            padding: 0 15px;
+            margin-top: 3rem;
+        }
+        .election-title {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f1f1f;
+        }
+        .election-subtitle {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1rem;
+            color: #666;
+        }
+        .form-section {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 35px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .section-header h4 {
+            font-weight: 600;
+            margin: 0;
+            font-size: 1.25rem;
+        }
+        .section-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        .form-section label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+            font-size: 0.9rem;
+        }
+        .form-control {
+            background-color: #f7f8fc;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        .gender-options {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .gender-options label {
+            display: inline-block;
+            margin-right: 20px;
+            font-weight: 400;
+        }
+        .position-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .candidates-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px; /* Increased space between cards */
+        }
+        .candidate-wrapper {
+            flex: 0 0 calc(33.33% - 26.66px); /* Adjusted for 3 cards with gap */
+            max-width: calc(33.33% - 26.66px);
+            display: block;
+            text-align: center;
+        }
+        .custom-candidate-card {
+            display: block;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            transition: box-shadow 0.2s, border-color 0.2s;
+            height: 100%;
+            padding: 15px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 0;
+            background-color: #f9f9f9;
+        }
+        .custom-candidate-card img {
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+        .custom-candidate-card h5 {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #000;
+            font-size: 1.1rem;
+        }
+        .custom-candidate-card p {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .hidden-radio {
+            display: none;
+        }
+        .vote-button {
+            display: inline-block;
+            padding: 6px 15px;
+            border: 1px solid #28a745;
+            border-radius: 15px;
+            font-weight: 500;
+            background-color: #28a745;
+            color: white;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        .hidden-radio:checked + .custom-candidate-card .vote-button {
+            background-color: #218838;
+            border-color: #218838;
+            color: white;
+            font-weight: 600;
+        }
+        .hidden-radio:checked + .custom-candidate-card {
+            border-color: #28a745;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
+        }
+        .btn-submit {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 12px 30px;
+            border-radius: 5px;
+            display: block;
+            margin: 40px auto 0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-submit:hover {
+            background-color: #af1e2c;
+        }
+        @media (max-width: 768px) {
+            .election-title {
+                font-size: 1.5rem;
+            }
+            .form-section {
+                padding: 20px;
+            }
+            .main-content-wrapper {
+                max-width: 100%; /* Full width on mobile */
+            }
+            .candidates-container {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                align-items: center;
+            }
+            .candidate-wrapper {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+            .custom-candidate-card img {
+                width: 120px;
+                height: 120px;
+            }
+            .section-header h4 {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <img src="{% static 'images/koica_logo.png' %}" alt="KOICA Logo">
+    <h4>KOICA Bangladesh</h4>
+</div>
+
+<div class="main-content-wrapper">
+    <h1 class="election-title">KBAA Executive Committee Election 2025</h1>
+    <p class="election-subtitle">Member Voting Ballot</p>
+    <p class="election-subtitle">Please fill in all * required details, including your personal information.</p>
+
+    <form id="vote-form" method="post">
+        {% csrf_token %}
+
+        <div class="form-section">
+            <div class="section-header">
+                <span class="section-number">1</span>
+                <h4>Personal Information</h4>
+            </div>
+
+            <label for="id_full_name">Full Name *</label>
+            <input type="text" name="full_name" id="id_full_name" class="form-control" placeholder="Name Here..."
+                   value="{{ voter.full_name|default_if_none:'' }}" required>
+
+            <label for="id_email">Email address *</label>
+            <input type="email" name="email" id="id_email" class="form-control" placeholder="Write Your Email..."
+                   value="{{ voter.email|default_if_none:'' }}" required>
+
+            <label>Select Gender *</label>
+            <div class="gender-options mb-3">
+                <label>
+                    <input type="radio" name="gender" value="M" {% if voter.gender == "M" %}checked{% endif %} required> Male
+                </label>
+                <label>
+                    <input type="radio" name="gender" value="F" {% if voter.gender == "F" %}checked{% endif %} required> Female
+                </label>
+            </div>
+
+            <label for="id_designation">Present Designation / Retired Designation *</label>
+            <input type="text" name="designation" id="id_designation" class="form-control" placeholder="Write Here..."
+                   value="{{ voter.designation|default_if_none:'' }}" required>
+
+            <label for="id_workplace_address">Present Organization & Department / Last Organization & Department *</label>
+            <input type="text" name="workplace_address" id="id_workplace_address" class="form-control" placeholder="Write Here..."
+                   value="{{ voter.workplace_address|default_if_none:'' }}" required>
+
+            <label for="id_last_training_date">Last KOICA training date</label>
+            <input type="date" name="last_training_date" id="id_last_training_date" class="form-control"
+                   value="{{ voter.last_training_date|date:'Y-m-d'|default_if_none:'' }}">
+        </div>
+
+        <div class="form-section">
+            <div class="section-header">
+                <span class="section-number">2</span>
+                <h4>Select Your Candidates</h4>
+            </div>
+
+            <h3 class="position-title">{{ position.name }}</h3>
+
+            <div class="candidates-container">
+                {% for candidate in candidates %}
+                <div class="candidate-wrapper">
+                    <input type="radio" name="candidate" value="{{ candidate.id }}" id="candidate-{{ candidate.id }}" class="hidden-radio" required>
+                    <label for="candidate-{{ candidate.id }}" class="custom-candidate-card">
+                        <img src="{{ candidate.photo.url }}" alt="{{ candidate.full_name }}">
+                        <h5>{{ candidate.full_name }}</h5>
+                        <p>{{ candidate.designation }}</p>
+                        <span class="vote-button">Vote</span>
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <input type="hidden" name="position_id" value="{{ position.id }}">
+        <button type="submit" class="btn-submit">Save & Continue</button>
+    </form>
+</div>
+
+<div class="footer">
+    <p>&copy; Copyright 2025 by KBAA</p>
+</div>
+
+<script>
+const form = document.getElementById('vote-form');
+form.addEventListener('submit', function(e){
+    e.preventDefault();
+    const formData = new FormData(form);
+    fetch("{% url 'voting' %}", {
+        method:'POST',
+        body:formData,
+        headers:{'X-Requested-With':'XMLHttpRequest'}
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        if(data.success){
+            if(data.next_position_url) {
+                window.location.href = data.next_position_url;
+            } else {
+                alert('Voting complete. Thank you!');
+            }
+        } else {
+            alert(data.error || 'An error occurred. Please try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('A network error occurred. Please check your connection and try again.');
+    });
+});
+</script>
+</body>
+</html>

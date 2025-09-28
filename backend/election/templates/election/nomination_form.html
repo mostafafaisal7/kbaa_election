@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nomination Form - {{ session.name }}</title>
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+</head>
+<body>
+<div class="container mt-5">
+  <h2>Nomination Form - {{ session.name }}</h2>
+  <hr>
+
+  {% include "election/components/form_messages.html" %}
+
+  {% if session %}
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+        {% include "election/components/form_field.html" with field=field %}
+      {% endfor %}
+      <button type="submit" class="btn btn-primary">Submit Nomination</button>
+    </form>
+  {% else %}
+    <div class="alert alert-warning">No nomination session is currently open.</div>
+  {% endif %}
+</div>
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
