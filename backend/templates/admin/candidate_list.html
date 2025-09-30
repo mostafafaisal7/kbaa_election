@@ -1,0 +1,70 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Candidates{% endblock %}
+
+{% block page_title %}Candidates{% endblock %}
+
+{% block content %}
+<div class="table-container">
+    <div class="table-header">
+        <h2>Candidate List</h2>
+        <button class="filter-btn">
+            ☰ Filter
+        </button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Name</th>
+                <th>Email address</th>
+                <th>Gender</th>
+                <th>P. Designation</th>
+                <th>Position</th>
+                <th>Status</th>
+                <th>Vote</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidate in candidates %}
+            <tr>
+                <td>{{ forloop.counter|stringformat:"02d" }}</td>
+                <td>
+                    <div class="user-cell">
+                        {% if candidate.photo %}
+                        <img src="{{ candidate.photo.url }}" alt="{{ candidate.full_name }}" class="user-avatar">
+                        {% else %}
+                        <img src="https://ui-avatars.com/api/?name={{ candidate.full_name }}&background=10b981&color=fff" alt="{{ candidate.full_name }}" class="user-avatar">
+                        {% endif %}
+                        {{ candidate.full_name }}
+                    </div>
+                </td>
+                <td>{{ candidate.email }}</td>
+                <td>{{ candidate.gender }}</td>
+                <td>{{ candidate.designation }}</td>
+                <td>{{ candidate.desired_position.name }}</td>
+                <td>
+                    {% if candidate.approved %}
+                    <span style="color: #10b981; font-weight: 600;">✓ Approved</span>
+                    {% else %}
+                    <span style="color: #f59e0b; font-weight: 600;">⏳ Pending</span>
+                    {% endif %}
+                </td>
+                <td>{{ candidate.vote_count }}</td>
+                <td>
+                    <a href="/admin/election/nomination/{{ candidate.id }}/change/" class="details-btn">Details</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9" style="text-align: center; padding: 2rem; color: #6b7280;">
+                    No candidates found
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

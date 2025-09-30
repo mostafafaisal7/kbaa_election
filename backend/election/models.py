@@ -19,6 +19,7 @@ class Session(models.Model):
     STATUS_CHOICES = [
         ("Nominations Open", "Nominations Open"),
         ("Voting Open", "Voting Open"),
+        ("Results Published", "Results Published"),  # NEW STATUS
         ("Closed", "Closed"),
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Nominations Open")
@@ -27,8 +28,6 @@ class Session(models.Model):
 
     def __str__(self):
         return self.name
-
-
 # -----------------------------
 # 2. Position
 # -----------------------------
@@ -41,15 +40,17 @@ class Position(models.Model):
 
 
 # -----------------------------
-# 3. Nomination (Candidate)
+# 3. Nomination (Candidate) - UPDATED
 # -----------------------------
 class Nomination(models.Model):
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=100)
     email = models.EmailField()
+    phone_number = models.CharField(max_length=20, blank=True, null=True)  # NEW FIELD
     gender = models.CharField(max_length=10, choices=[("Male", "Male"), ("Female", "Female")])
     designation = models.CharField(max_length=100)
     workplace_address = models.CharField(max_length=255)
+    last_training_date = models.DateField(blank=True, null=True)  # NEW FIELD
     interested = models.BooleanField(default=True)
     desired_position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True)
     approved = models.BooleanField(default=False)

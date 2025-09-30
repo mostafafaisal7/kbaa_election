@@ -1,0 +1,59 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Voters{% endblock %}
+
+{% block page_title %}Voters{% endblock %}
+
+{% block content %}
+<div class="table-container">
+    <div class="table-header">
+        <h2>Voter List</h2>
+        <button class="filter-btn">
+            ☰ Filter
+        </button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Name</th>
+                <th>Email address</th>
+                <th>Gender</th>
+                <th>P. Designation</th>
+                <th>Workplace Address</th>
+                <th>Voted At</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for voter in voters %}
+            <tr>
+                <td>{{ forloop.counter|stringformat:"02d" }}</td>
+                <td>{{ voter.full_name }}</td>
+                <td>{{ voter.email }}</td>
+                <td>{{ voter.gender }}</td>
+                <td>{{ voter.designation }}</td>
+                <td>{{ voter.workplace_address }}</td>
+                <td>
+                    {% if voter.voted_at %}
+                    {{ voter.voted_at|date:"M d, Y H:i" }}
+                    {% else %}
+                    <span style="color: #6b7280;">Not voted yet</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="/admin/election/voter/{{ voter.id }}/change/" class="details-btn">Details</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 2rem; color: #6b7280;">
+                    No voters found
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

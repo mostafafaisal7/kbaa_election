@@ -1,0 +1,60 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Votes{% endblock %}
+
+{% block page_title %}Votes{% endblock %}
+
+{% block content %}
+<div class="table-container">
+    <div class="table-header">
+        <h2>All Votes</h2>
+        <button class="filter-btn">
+            ☰ Filter
+        </button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Voter Name</th>
+                <th>Voter Email</th>
+                <th>Position</th>
+                <th>Candidate</th>
+                <th>Voted At</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vote in votes %}
+            <tr>
+                <td>{{ forloop.counter|stringformat:"02d" }}</td>
+                <td>{{ vote.voter.full_name }}</td>
+                <td>{{ vote.voter.email }}</td>
+                <td>{{ vote.position.name }}</td>
+                <td>
+                    <div class="user-cell">
+                        {% if vote.nominee.photo %}
+                        <img src="{{ vote.nominee.photo.url }}" alt="{{ vote.nominee.full_name }}" class="user-avatar">
+                        {% else %}
+                        <img src="https://ui-avatars.com/api/?name={{ vote.nominee.full_name }}&background=10b981&color=fff" alt="{{ vote.nominee.full_name }}" class="user-avatar">
+                        {% endif %}
+                        {{ vote.nominee.full_name }}
+                    </div>
+                </td>
+                <td>{{ vote.created_at|date:"M d, Y H:i" }}</td>
+                <td>
+                    <a href="/admin/election/vote/{{ vote.id }}/change/" class="details-btn">Details</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 2rem; color: #6b7280;">
+                    No votes recorded yet
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

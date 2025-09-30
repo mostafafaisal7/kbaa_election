@@ -1,0 +1,105 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Voting Control{% endblock %}
+
+{% block page_title %}Voting Control{% endblock %}
+
+{% block content %}
+<div class="table-container">
+    <div class="table-header">
+        <h2>Election Sessions</h2>
+        <a href="/admin/election/session/add/" class="details-btn" style="text-decoration: none;">
+            + Create New Session
+        </a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Session Name</th>
+                <th>Status</th>
+                <th>Nomination Period</th>
+                <th>Voting Period</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for session in sessions %}
+            <tr>
+                <td><strong>{{ session.name }}</strong></td>
+                <td>
+                    {% if session.status == 'Nominations Open' %}
+                    <span style="background: #fef3c7; color: #d97706; padding: 0.25rem 0.75rem; border-radius: 12px; font-weight: 600;">
+                        📝 {{ session.status }}
+                    </span>
+                    {% elif session.status == 'Voting Open' %}
+                    <span style="background: #d1fae5; color: #059669; padding: 0.25rem 0.75rem; border-radius: 12px; font-weight: 600;">
+                        🗳️ {{ session.status }}
+                    </span>
+                    {% else %}
+                    <span style="background: #e5e7eb; color: #6b7280; padding: 0.25rem 0.75rem; border-radius: 12px; font-weight: 600;">
+                        🔒 {{ session.status }}
+                    </span>
+                    {% endif %}
+                </td>
+                <td>
+                    {{ session.start_nomination|date:"M d, Y" }} - {{ session.end_nomination|date:"M d, Y" }}
+                </td>
+                <td>
+                    {{ session.start_voting|date:"M d, Y" }} - {{ session.end_voting|date:"M d, Y" }}
+                </td>
+                <td>
+                    <a href="/admin/election/session/{{ session.id }}/change/" class="details-btn">
+                        Edit Session
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 2rem; color: #6b7280;">
+                    No election sessions found. Create one to get started.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="table-container">
+    <div class="table-header">
+        <h2>Positions</h2>
+        <a href="/admin/election/position/add/" class="details-btn" style="text-decoration: none;">
+            + Add Position
+        </a>
+    </div>
+
+    <p style="color: #6b7280; margin-bottom: 1rem;">
+        Manage positions available for election. Order determines voting sequence.
+    </p>
+
+    <a href="/admin/election/position/" class="details-btn" style="text-decoration: none; display: inline-block;">
+        Manage Positions
+    </a>
+</div>
+
+<div class="table-container">
+    <div class="table-header">
+        <h2>Quick Actions</h2>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <a href="/admin/election/nomination/?approved__exact=0" style="padding: 1.5rem; background: #fef3c7; border-radius: 8px; text-decoration: none; color: #d97706; font-weight: 600; text-align: center;">
+            📋 Review Pending Nominations
+        </a>
+        <a href="/admin/election/voter/" style="padding: 1.5rem; background: #dbeafe; border-radius: 8px; text-decoration: none; color: #2563eb; font-weight: 600; text-align: center;">
+            👥 Manage Voters
+        </a>
+        <a href="/admin/election/vote/" style="padding: 1.5rem; background: #d1fae5; border-radius: 8px; text-decoration: none; color: #059669; font-weight: 600; text-align: center;">
+            🗳️ View All Votes
+        </a>
+        <a href="{% url 'admin_results' %}" style="padding: 1.5rem; background: #fce7f3; border-radius: 8px; text-decoration: none; color: #ec4899; font-weight: 600; text-align: center;">
+            🏆 View Results
+        </a>
+    </div>
+</div>
+{% endblock %}

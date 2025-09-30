@@ -57,7 +57,7 @@ ROOT_URLCONF = 'kbaa_election.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # ← CHANGED THIS LINE
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

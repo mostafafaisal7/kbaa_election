@@ -1,0 +1,80 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Results{% endblock %}
+
+{% block page_title %}Election Results{% endblock %}
+
+{% block content %}
+{% for result in results %}
+<div class="table-container">
+    <div class="table-header">
+        <h2>{{ result.position.name }}</h2>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Candidate</th>
+                <th>Email</th>
+                <th>Designation</th>
+                <th>Total Votes</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidate in result.candidates %}
+            <tr style="{% if forloop.first %}background-color: #d1fae5;{% endif %}">
+                <td>
+                    <strong style="font-size: 1.25rem;">
+                        {% if forloop.first %}
+                        🏆 #{{ forloop.counter }}
+                        {% else %}
+                        #{{ forloop.counter }}
+                        {% endif %}
+                    </strong>
+                </td>
+                <td>
+                    <div class="user-cell">
+                        {% if candidate.photo %}
+                        <img src="{{ candidate.photo.url }}" alt="{{ candidate.full_name }}" class="user-avatar">
+                        {% else %}
+                        <img src="https://ui-avatars.com/api/?name={{ candidate.full_name }}&background=10b981&color=fff" alt="{{ candidate.full_name }}" class="user-avatar">
+                        {% endif %}
+                        <strong>{{ candidate.full_name }}</strong>
+                    </div>
+                </td>
+                <td>{{ candidate.email }}</td>
+                <td>{{ candidate.designation }}</td>
+                <td>
+                    <strong style="font-size: 1.25rem; color: #10b981;">
+                        {{ candidate.vote_count }}
+                    </strong>
+                </td>
+                <td>
+                    {% if forloop.first %}
+                    <span style="color: #10b981; font-weight: 700;">🎉 Winner</span>
+                    {% else %}
+                    <span style="color: #6b7280;">-</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 2rem; color: #6b7280;">
+                    No votes cast for this position
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% empty %}
+<div class="table-container">
+    <div style="text-align: center; padding: 3rem;">
+        <h3 style="color: #6b7280; margin-bottom: 1rem;">No Results Available</h3>
+        <p style="color: #9ca3af;">Results will appear once voting has started and votes have been cast.</p>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

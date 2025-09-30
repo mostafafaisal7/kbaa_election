@@ -1,351 +1,654 @@
-{% load static custom_tags %}
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>{{ session.name }} - Voting</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ session.name }} - Voting</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
             color: #333;
         }
-        .header {
-            background: linear-gradient(to right, #002b5c, #dc3545, #28a745, #dc3545);
-            color: white;
-            padding: 15px 0;
-            text-align: center;
-            position: relative;
+
+        .header-stripe {
+            height: 18px;
+            background: linear-gradient(to right, 
+                #003d82 0%, #003d82 20%,
+                #f39c12 20%, #f39c12 40%,
+                #3498db 40%, #3498db 60%,
+                #e67e22 60%, #e67e22 80%,
+                #a4c639 80%, #a4c639 100%
+            );
         }
-        .header h4 {
-            margin: 0;
-            font-size: 1.5rem;
+
+        .header-section {
+            background-color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            margin-bottom: 1rem;
+        }
+
+        .logo-text {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #e67e22;
+            letter-spacing: 2px;
+        }
+
+        .logo-text span {
+            color: #003d82;
+        }
+
+        .logo-subtext {
+            font-size: 1.2rem;
+            color: #003d82;
+            font-weight: 600;
+        }
+
+        .main-title {
+            font-size: 1.8rem;
             font-weight: 700;
+            color: #2c3e50;
+            margin: 1.5rem 0 0.5rem;
         }
-        .header img {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 120px;
+
+        .sub-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 0.5rem;
         }
-        .footer {
-            background-color: #002b5c;
-            color: white;
-            padding: 15px 0;
-            text-align: center;
-            margin-top: 50px;
+
+        .instruction-text {
+            color: #7f8c8d;
+            font-size: 0.95rem;
         }
-        .main-content-wrapper {
-            max-width: 1000px; /* Increased container width for 3 cards */
-            margin: 0 auto;
-            padding: 0 15px;
-            margin-top: 3rem;
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
         }
-        .election-title {
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1f1f1f;
-        }
-        .election-subtitle {
-            text-align: center;
-            margin-bottom: 40px;
-            font-size: 1rem;
-            color: #666;
-        }
+
         .form-section {
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            margin-bottom: 35px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
         }
+
+        .form-section.collapsed {
+            padding: 1rem 2rem;
+        }
+
+        .form-section.collapsed .form-content {
+            display: none;
+        }
+
         .section-header {
             display: flex;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
         }
-        .section-header h4 {
-            font-weight: 600;
-            margin: 0;
-            font-size: 1.25rem;
+
+        .form-section.collapsed .section-header {
+            margin-bottom: 0;
         }
+
         .section-number {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             background-color: #dc3545;
             color: white;
             border-radius: 50%;
-            font-weight: 600;
-            font-size: 1rem;
-            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-right: 1rem;
             flex-shrink: 0;
         }
-        .form-section label {
+
+        .section-number.completed {
+            background-color: #28a745;
+        }
+
+        .section-header h4 {
+            margin: 0;
+            font-size: 1.2rem;
             font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .toggle-icon {
+            margin-left: auto;
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            transition: transform 0.3s;
+        }
+
+        .form-section.collapsed .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .form-label {
             display: block;
-            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
         }
+
+        .required {
+            color: #e74c3c;
+        }
+
         .form-control {
-            background-color: #f7f8fc;
-            border: 1px solid #ddd;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
             width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+            background-color: #f9fafb;
+            margin-bottom: 1.25rem;
         }
-        .gender-options {
-            text-align: center;
-            margin-bottom: 15px;
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            background-color: white;
         }
-        .gender-options label {
-            display: inline-block;
-            margin-right: 20px;
+
+        .radio-group {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .radio-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #3498db;
+        }
+
+        .radio-option label {
+            margin: 0;
+            cursor: pointer;
             font-weight: 400;
         }
+
         .position-title {
             text-align: center;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 600;
-            margin-bottom: 20px;
-            color: #333;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e0e0e0;
         }
-        .candidates-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 40px; /* Increased space between cards */
+
+        .candidates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
         }
-        .candidate-wrapper {
-            flex: 0 0 calc(33.33% - 26.66px); /* Adjusted for 3 cards with gap */
-            max-width: calc(33.33% - 26.66px);
-            display: block;
-            text-align: center;
-        }
-        .custom-candidate-card {
-            display: block;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            transition: box-shadow 0.2s, border-color 0.2s;
-            height: 100%;
-            padding: 15px;
+
+        .candidate-card {
+            position: relative;
             cursor: pointer;
-            width: 100%;
-            margin-bottom: 0;
-            background-color: #f9f9f9;
         }
-        .custom-candidate-card img {
+
+        .candidate-radio {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .candidate-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .candidate-label:hover {
+            border-color: #3498db;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+        }
+
+        .candidate-radio:checked + .candidate-label {
+            border-color: #28a745;
+            box-shadow: 0 4px 16px rgba(40, 167, 69, 0.2);
+            background-color: #f8fff9;
+        }
+
+        .candidate-photo {
             width: 150px;
             height: 150px;
-            border-radius: 10px;
+            border-radius: 8px;
             object-fit: cover;
-            margin-bottom: 10px;
+            margin-bottom: 1rem;
+            border: 3px solid #e0e0e0;
         }
-        .custom-candidate-card h5 {
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #000;
+
+        .candidate-radio:checked + .candidate-label .candidate-photo {
+            border-color: #28a745;
+        }
+
+        .candidate-name {
             font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            text-align: center;
         }
-        .custom-candidate-card p {
+
+        .candidate-designation {
             font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 10px;
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+            text-align: center;
+            line-height: 1.4;
         }
-        .hidden-radio {
-            display: none;
+
+        .candidate-organization {
+            font-size: 0.85rem;
+            color: #95a5a6;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-style: italic;
         }
+
         .vote-button {
-            display: inline-block;
-            padding: 6px 15px;
-            border: 1px solid #28a745;
-            border-radius: 15px;
-            font-weight: 500;
+            padding: 0.5rem 1.5rem;
             background-color: #28a745;
             color: white;
-            transition: all 0.2s;
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
             font-size: 0.9rem;
+            transition: all 0.2s;
+            cursor: pointer;
         }
-        .hidden-radio:checked + .custom-candidate-card .vote-button {
+
+        .vote-button:hover {
             background-color: #218838;
-            border-color: #218838;
-            color: white;
+        }
+
+        .vote-button.voted {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .candidate-label.disabled {
+            opacity: 0.6;
+        }
+
+        .candidate-label.disabled .vote-button {
+            background-color: #dee2e6;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .vote-count {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .candidate-radio:checked + .candidate-label .vote-count {
+            color: #28a745;
             font-weight: 600;
         }
-        .hidden-radio:checked + .custom-candidate-card {
-            border-color: #28a745;
-            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
-        }
-        .btn-submit {
-            background-color: #dc3545;
+
+        .submit-button {
+            background-color: #dc143c;
             color: white;
             border: none;
             font-weight: 600;
+            padding: 1rem 3rem;
+            font-size: 1rem;
             text-transform: uppercase;
-            padding: 12px 30px;
-            border-radius: 5px;
-            display: block;
-            margin: 40px auto 0;
-            cursor: pointer;
+            letter-spacing: 0.5px;
             transition: background-color 0.2s;
+            border-radius: 4px;
+            display: block;
+            margin: 2rem auto 0;
+            cursor: pointer;
         }
-        .btn-submit:hover {
-            background-color: #af1e2c;
+
+        .submit-button:hover {
+            background-color: #b8102f;
         }
+
+        .submit-button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: #003d82;
+            color: white;
+            margin-top: 3rem;
+        }
+
         @media (max-width: 768px) {
-            .election-title {
+            .main-title {
                 font-size: 1.5rem;
             }
-            .form-section {
-                padding: 20px;
-            }
-            .main-content-wrapper {
-                max-width: 100%; /* Full width on mobile */
-            }
-            .candidates-container {
-                display: flex;
-                flex-direction: column;
-                gap: 20px;
-                align-items: center;
-            }
-            .candidate-wrapper {
-                flex: 0 0 100%;
-                max-width: 100%;
-            }
-            .custom-candidate-card img {
-                width: 120px;
-                height: 120px;
-            }
-            .section-header h4 {
+
+            .sub-title {
                 font-size: 1.1rem;
+            }
+
+            .candidates-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .form-section {
+                padding: 1.5rem;
+            }
+
+            .radio-group {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .submit-button {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-<div class="header">
-    <img src="{% static 'images/koica_logo.png' %}" alt="KOICA Logo">
-    <h4>KOICA Bangladesh</h4>
-</div>
+    <div class="header-stripe"></div>
 
-<div class="main-content-wrapper">
-    <h1 class="election-title">KBAA Executive Committee Election 2025</h1>
-    <p class="election-subtitle">Member Voting Ballot</p>
-    <p class="election-subtitle">Please fill in all * required details, including your personal information.</p>
-
-    <form id="vote-form" method="post">
-        {% csrf_token %}
-
-        <div class="form-section">
-            <div class="section-header">
-                <span class="section-number">1</span>
-                <h4>Personal Information</h4>
-            </div>
-
-            <label for="id_full_name">Full Name *</label>
-            <input type="text" name="full_name" id="id_full_name" class="form-control" placeholder="Name Here..."
-                   value="{{ voter.full_name|default_if_none:'' }}" required>
-
-            <label for="id_email">Email address *</label>
-            <input type="email" name="email" id="id_email" class="form-control" placeholder="Write Your Email..."
-                   value="{{ voter.email|default_if_none:'' }}" required>
-
-            <label>Select Gender *</label>
-            <div class="gender-options mb-3">
-                <label>
-                    <input type="radio" name="gender" value="M" {% if voter.gender == "M" %}checked{% endif %} required> Male
-                </label>
-                <label>
-                    <input type="radio" name="gender" value="F" {% if voter.gender == "F" %}checked{% endif %} required> Female
-                </label>
-            </div>
-
-            <label for="id_designation">Present Designation / Retired Designation *</label>
-            <input type="text" name="designation" id="id_designation" class="form-control" placeholder="Write Here..."
-                   value="{{ voter.designation|default_if_none:'' }}" required>
-
-            <label for="id_workplace_address">Present Organization & Department / Last Organization & Department *</label>
-            <input type="text" name="workplace_address" id="id_workplace_address" class="form-control" placeholder="Write Here..."
-                   value="{{ voter.workplace_address|default_if_none:'' }}" required>
-
-            <label for="id_last_training_date">Last KOICA training date</label>
-            <input type="date" name="last_training_date" id="id_last_training_date" class="form-control"
-                   value="{{ voter.last_training_date|date:'Y-m-d'|default_if_none:'' }}">
+    <div class="header-section">
+        <div class="logo">
+            <div class="logo-text">K<span>O</span>ICA</div>
+            <div class="logo-subtext">Bangladesh</div>
         </div>
+        <h1 class="main-title">KBAA Executive Committee Election 2025</h1>
+        <h2 class="sub-title">Member Voting Ballot</h2>
+        <p class="instruction-text">Please fill in all * required details, including your personal information.</p>
+    </div>
 
-        <div class="form-section">
-            <div class="section-header">
-                <span class="section-number">2</span>
-                <h4>Select Your Candidates</h4>
-            </div>
+    <div class="container">
+        <form method="post" id="voting-form">
+            {% csrf_token %}
 
-            <h3 class="position-title">{{ position.name }}</h3>
-
-            <div class="candidates-container">
-                {% for candidate in candidates %}
-                <div class="candidate-wrapper">
-                    <input type="radio" name="candidate" value="{{ candidate.id }}" id="candidate-{{ candidate.id }}" class="hidden-radio" required>
-                    <label for="candidate-{{ candidate.id }}" class="custom-candidate-card">
-                        <img src="{{ candidate.photo.url }}" alt="{{ candidate.full_name }}">
-                        <h5>{{ candidate.full_name }}</h5>
-                        <p>{{ candidate.designation }}</p>
-                        <span class="vote-button">Vote</span>
-                    </label>
+            <!-- Section 1: Personal Information -->
+            <div class="form-section {% if not is_first_vote %}collapsed{% endif %}" id="personal-info-section">
+                <div class="section-header" onclick="toggleSection('personal-info-section')">
+                    <div class="section-number {% if not is_first_vote %}completed{% endif %}">1</div>
+                    <h4>Personal Information {% if not is_first_vote %}(Completed){% endif %}</h4>
+                    <span class="toggle-icon">▼</span>
                 </div>
-                {% endfor %}
+
+                <div class="form-content">
+                    <label class="form-label">
+                        Full Name <span class="required">*</span>
+                    </label>
+                    <input type="text" 
+                           name="full_name" 
+                           class="form-control" 
+                           placeholder="Name Here..."
+                           value="{{ voter.full_name|default:'' }}"
+                           required>
+
+                    <label class="form-label">
+                        Email Address <span class="required">*</span>
+                    </label>
+                    <input type="email" 
+                           name="email" 
+                           class="form-control" 
+                           placeholder="Write Your Email..."
+                           value="{{ voter.email|default:'' }}"
+                           required>
+
+                    <label class="form-label">
+                        Select Gender <span class="required">*</span>
+                    </label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" 
+                                   name="gender" 
+                                   value="Male" 
+                                   id="gender_male"
+                                   {% if voter.gender == 'Male' %}checked{% endif %}
+                                   required>
+                            <label for="gender_male">Male</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" 
+                                   name="gender" 
+                                   value="Female" 
+                                   id="gender_female"
+                                   {% if voter.gender == 'Female' %}checked{% endif %}
+                                   required>
+                            <label for="gender_female">Female</label>
+                        </div>
+                    </div>
+
+                    <label class="form-label">
+                        Present Designation / Retired Designation <span class="required">*</span>
+                    </label>
+                    <input type="text" 
+                           name="designation" 
+                           class="form-control" 
+                           placeholder="Write Here..."
+                           value="{{ voter.designation|default:'' }}"
+                           required>
+
+                    <label class="form-label">
+                        Present Organization & Department / Last Organization & Department <span class="required">*</span>
+                    </label>
+                    <input type="text" 
+                           name="workplace_address" 
+                           class="form-control" 
+                           placeholder="Write Here..."
+                           value="{{ voter.workplace_address|default:'' }}"
+                           required>
+
+                    <label class="form-label">
+                        Last KOICA Training Date
+                    </label>
+                    <input type="date" 
+                           name="last_training_date" 
+                           class="form-control"
+                           value="{{ voter.last_training_date|date:'Y-m-d'|default:'' }}">
+                </div>
             </div>
-        </div>
 
-        <input type="hidden" name="position_id" value="{{ position.id }}">
-        <button type="submit" class="btn-submit">Save & Continue</button>
-    </form>
-</div>
+            <!-- Section 2: Select Your Candidates -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-number">2</div>
+                    <h4>Select Your Candidates</h4>
+                </div>
 
-<div class="footer">
-    <p>&copy; Copyright 2025 by KBAA</p>
-</div>
+                <h3 class="position-title">{{ position.name }}</h3>
 
-<script>
-const form = document.getElementById('vote-form');
-form.addEventListener('submit', function(e){
-    e.preventDefault();
-    const formData = new FormData(form);
-    fetch("{% url 'voting' %}", {
-        method:'POST',
-        body:formData,
-        headers:{'X-Requested-With':'XMLHttpRequest'}
-    })
-    .then(res=>res.json())
-    .then(data=>{
-        if(data.success){
-            if(data.next_position_url) {
-                window.location.href = data.next_position_url;
-            } else {
-                alert('Voting complete. Thank you!');
-            }
-        } else {
-            alert(data.error || 'An error occurred. Please try again.');
+                <div class="candidates-grid">
+                    {% for candidate in candidates %}
+                    <div class="candidate-card">
+                        <input type="radio" 
+                               name="candidate" 
+                               value="{{ candidate.id }}" 
+                               id="candidate_{{ candidate.id }}"
+                               class="candidate-radio"
+                               data-candidate-id="{{ candidate.id }}"
+                               required>
+                        <label for="candidate_{{ candidate.id }}" class="candidate-label">
+                            {% if candidate.photo %}
+                            <img src="{{ candidate.photo.url }}" 
+                                 alt="{{ candidate.full_name }}" 
+                                 class="candidate-photo">
+                            {% else %}
+                            <img src="{% static 'images/default-avatar.png' %}" 
+                                 alt="{{ candidate.full_name }}" 
+                                 class="candidate-photo">
+                            {% endif %}
+                            
+                            <div class="candidate-name">{{ candidate.full_name }}</div>
+                            <div class="candidate-designation">{{ candidate.designation }}</div>
+                            <div class="candidate-organization">{{ candidate.workplace_address }}</div>
+                            
+                            <button type="button" class="vote-button" onclick="selectCandidate('{{ candidate.id }}', event)">Vote</button>
+                            
+                            <div class="vote-count" data-candidate-id="{{ candidate.id }}">
+                                Total Vote: <span class="count">{{ candidate.vote_count }}</span>
+                            </div>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <input type="hidden" name="position_id" value="{{ position.id }}">
+            <button type="submit" class="submit-button" id="submit-btn">Save & Continue</button>
+        </form>
+    </div>
+
+    <div class="footer">
+        © Copyright 2025 by KBAA
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script>
+        // Toggle personal information section
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.classList.toggle('collapsed');
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('A network error occurred. Please check your connection and try again.');
-    });
-});
-</script>
+
+        let voteSelected = false;
+
+        // Handle vote button click
+        function selectCandidate(candidateId, event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (voteSelected) {
+                return; // Prevent selecting again
+            }
+
+            voteSelected = true;
+
+            // Select the radio button
+            const radio = document.getElementById(`candidate_${candidateId}`);
+            radio.checked = true;
+
+            // Update vote count for selected candidate (optimistic update)
+            updateVoteCount(candidateId);
+
+            // Disable all candidate cards and buttons
+            const allCandidateLabels = document.querySelectorAll('.candidate-label');
+            const allVoteButtons = document.querySelectorAll('.vote-button');
+
+            allCandidateLabels.forEach(label => {
+                label.classList.add('disabled');
+            });
+
+            allVoteButtons.forEach(button => {
+                button.disabled = true;
+                button.style.pointerEvents = 'none';
+            });
+
+            // Change the selected candidate's button
+            const selectedButton = event.target;
+            const selectedLabel = selectedButton.closest('.candidate-label');
+            
+            selectedLabel.classList.remove('disabled');
+            selectedLabel.style.opacity = '1';
+            
+            selectedButton.textContent = 'Voted';
+            selectedButton.classList.add('voted');
+            selectedButton.style.backgroundColor = '#6c757d';
+        }
+
+        function updateVoteCount(candidateId) {
+            // Simulate immediate vote count increase (optimistic update)
+            const voteCountElement = document.querySelector(`.vote-count[data-candidate-id="${candidateId}"] .count`);
+            if (voteCountElement) {
+                const currentCount = parseInt(voteCountElement.textContent) || 0;
+                voteCountElement.textContent = currentCount + 1;
+            }
+        }
+
+        // Fetch real-time vote counts every 5 seconds
+        function fetchVoteCounts() {
+            const positionId = document.querySelector('input[name="position_id"]').value;
+            
+            fetch(`/api/vote_counts/${positionId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(item => {
+                        const voteCountElement = document.querySelector(`.vote-count[data-candidate-id="${item.nomination_id}"] .count`);
+                        if (voteCountElement) {
+                            voteCountElement.textContent = item.count;
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching vote counts:', error));
+        }
+
+        // Update vote counts every 5 seconds
+        setInterval(fetchVoteCounts, 5000);
+
+        // Form submission - Use regular form submit to allow Django redirects
+        const submitBtn = document.getElementById('submit-btn');
+        const form = document.getElementById('voting-form');
+
+        form.addEventListener('submit', function(e) {
+            // Check if a candidate is selected
+            const selectedCandidate = document.querySelector('.candidate-radio:checked');
+            if (!selectedCandidate) {
+                e.preventDefault();
+                alert('Please select a candidate before continuing.');
+                return false;
+            }
+
+            // Disable submit button to prevent double submission
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+        });
+    </script>
 </body>
 </html>
