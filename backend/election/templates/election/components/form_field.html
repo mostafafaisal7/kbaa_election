@@ -1,10 +1,103 @@
-<div class="mb-3">
-  <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-  {{ field }}
-  {% if field.help_text %}
-    <div class="form-text">{{ field.help_text }}</div>
+<div class="form-group">
+  <label for="{{ field.id_for_label }}" class="form-label">
+    {{ field.label }}
+    {% if field.field.required %}
+      <span class="required">*</span>
+    {% endif %}
+  </label>
+
+  {% if field.field.widget.input_type == 'radio' %}
+    <!-- Radio buttons -->
+    {% if 'position' in field.name or 'desired_position' in field.name %}
+      <!-- Vertical layout for position selection -->
+      <div class="position-options">
+        {% for choice in field %}
+          <div class="position-option">
+            {{ choice.tag }}
+            <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <!-- Horizontal layout for gender, interested, etc. -->
+      <div class="radio-group">
+        {% for choice in field %}
+          <div class="radio-option">
+            {{ choice.tag }}
+            <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+  {% elif field.field.widget.input_type == 'checkbox' %}
+    <!-- Checkbox -->
+    <div class="form-check">
+      {{ field }}
+      <label class="form-check-label" for="{{ field.id_for_label }}">
+        {{ field.label }}
+      </label>
+    </div>
+
+  {% elif field.field.widget.input_type == 'file' %}
+    <!-- File upload -->
+    <input type="file" 
+           name="{{ field.name }}" 
+           id="{{ field.id_for_label }}"
+           class="form-control"
+           {% if field.field.required %}required{% endif %}
+           accept="image/jpeg,image/jpg,image/png">
+
+  {% elif field.field.widget.input_type == 'date' %}
+    <!-- Date input -->
+    <input type="date" 
+           name="{{ field.name }}" 
+           id="{{ field.id_for_label }}"
+           class="form-control {% if field.errors %}is-invalid{% endif %}"
+           value="{{ field.value|default:'' }}"
+           {% if field.field.required %}required{% endif %}>
+
+  {% elif field.field.widget.input_type == 'select' %}
+    <!-- Select dropdown -->
+    <select name="{{ field.name }}" 
+            id="{{ field.id_for_label }}"
+            class="form-control {% if field.errors %}is-invalid{% endif %}"
+            {% if field.field.required %}required{% endif %}>
+      <option value="">Select {{ field.label }}</option>
+      {% for value, label in field.field.choices %}
+        <option value="{{ value }}" {% if field.value == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+
+  {% elif field.field.widget.input_type == 'textarea' %}
+    <!-- Textarea -->
+    <textarea name="{{ field.name }}" 
+              id="{{ field.id_for_label }}"
+              class="form-control {% if field.errors %}is-invalid{% endif %}"
+              rows="4"
+              placeholder="{{ field.label }}"
+              {% if field.field.required %}required{% endif %}>{{ field.value|default:'' }}</textarea>
+
+  {% else %}
+    <!-- Regular input fields (text, email, number, tel, etc.) -->
+    <input type="{{ field.field.widget.input_type }}" 
+           name="{{ field.name }}" 
+           id="{{ field.id_for_label }}"
+           class="form-control {% if field.errors %}is-invalid{% endif %}"
+           value="{{ field.value|default:'' }}"
+           placeholder="{{ field.label }}"
+           {% if field.field.required %}required{% endif %}>
   {% endif %}
-  {% for error in field.errors %}
-    <div class="text-danger">{{ error }}</div>
-  {% endfor %}
+
+  <!-- Error messages -->
+  {% if field.errors %}
+    {% for error in field.errors %}
+      <div class="invalid-feedback d-block">{{ error }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Help text -->
+  {% if field.help_text %}
+    <small class="form-text text-muted d-block mt-1">{{ field.help_text }}</small>
+  {% endif %}
 </div>

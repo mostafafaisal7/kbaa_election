@@ -3,29 +3,311 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nomination Form - {{ session.name }}</title>
   <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <style>
+    /* Nomination Form Custom Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    /* Colorful header stripe */
+    .header-stripe {
+      height: 18px;
+      background: linear-gradient(to right, 
+        #003d82 0%, #003d82 20%,
+        #f39c12 20%, #f39c12 40%,
+        #3498db 40%, #3498db 60%,
+        #e67e22 60%, #e67e22 80%,
+        #a4c639 80%, #a4c639 100%
+      );
+    }
+
+    .header-section {
+      background-color: white;
+      padding: 2rem 0;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 0;
+    }
+
+    .logo {
+      margin-bottom: 1rem;
+    }
+
+    .logo-text {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #e67e22;
+      letter-spacing: 2px;
+    }
+
+    .logo-text span {
+      color: #003d82;
+    }
+
+    .logo-subtext {
+      font-size: 1.2rem;
+      color: #003d82;
+      font-weight: 600;
+    }
+
+    .main-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin: 1.5rem 0 0.5rem;
+    }
+
+    .sub-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #34495e;
+      margin-bottom: 0.5rem;
+    }
+
+    .instruction-text {
+      color: #7f8c8d;
+      font-size: 0.95rem;
+    }
+
+    .container {
+      max-width: 700px !important;
+      background: white;
+      padding: 2.5rem !important;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin: 2rem auto !important;
+    }
+
+    /* Form styling */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .required {
+      color: #e74c3c;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+      background-color: #f9fafb;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #3498db;
+      background-color: white;
+      box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.15);
+    }
+
+    .form-control.is-invalid {
+      border-color: #e74c3c;
+    }
+
+    .invalid-feedback {
+      color: #e74c3c;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      display: block;
+    }
+
+    /* Radio buttons */
+    .radio-group {
+      display: flex;
+      gap: 2rem;
+      margin-top: 0.5rem;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .radio-option input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #3498db;
+    }
+
+    .radio-option label {
+      margin: 0;
+      cursor: pointer;
+      font-weight: 400;
+    }
+
+    /* Position radio options (vertical) */
+    .position-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .position-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .position-option input[type="radio"] {
+      margin-top: 0.25rem;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #3498db;
+    }
+
+    .position-option label {
+      margin: 0;
+      cursor: pointer;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    /* Submit button */
+    .submit-button {
+      background-color: #dc143c !important;
+      border: none !important;
+      font-weight: 600;
+      padding: 0.875rem 2.5rem;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: background-color 0.2s;
+      margin-top: 1rem;
+    }
+
+    .submit-button:hover {
+      background-color: #b8102f !important;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 1.5rem;
+      background-color: #003d82;
+      color: white;
+      margin-top: 0;
+    }
+
+    /* Alert styling */
+    .alert {
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+    }
+
+    .alert-warning {
+      background-color: #fff3cd;
+      border: 1px solid #ffc107;
+      color: #856404;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      border: 1px solid #28a745;
+      color: #155724;
+    }
+
+    .alert-danger {
+      background-color: #f8d7da;
+      border: 1px solid #dc3545;
+      color: #721c24;
+    }
+
+    .alert-info {
+      background-color: #d1ecf1;
+      border: 1px solid #17a2b8;
+      color: #0c5460;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        margin: 1rem !important;
+        padding: 1.5rem !important;
+      }
+
+      .main-title {
+        font-size: 1.5rem;
+      }
+
+      .sub-title {
+        font-size: 1.1rem;
+      }
+
+      .logo-text {
+        font-size: 2rem;
+      }
+
+      .radio-group {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="container mt-5">
-  <h2>Nomination Form - {{ session.name }}</h2>
-  <hr>
+  <!-- Colorful Header Stripe -->
+  <div class="header-stripe"></div>
 
-  {% include "election/components/form_messages.html" %}
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="logo">
+      <div class="logo-text">K<span>O</span>ICA</div>
+      <div class="logo-subtext">Bangladesh</div>
+    </div>
+    <h1 class="main-title">KBAA Executive Committee Election 2025</h1>
+    <h2 class="sub-title">Candidate Expression Of Interest</h2>
+    <p class="instruction-text">Please fill in all * required details, including your personal information.</p>
+  </div>
 
-  {% if session %}
-    <form method="post" enctype="multipart/form-data" novalidate>
-      {% csrf_token %}
-      {% for field in form %}
-        {% include "election/components/form_field.html" with field=field %}
-      {% endfor %}
-      <button type="submit" class="btn btn-primary">Submit Nomination</button>
-    </form>
-  {% else %}
-    <div class="alert alert-warning">No nomination session is currently open.</div>
-  {% endif %}
-</div>
+  <div class="container mt-5">
+    {% include "election/components/form_messages.html" %}
 
-<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    {% if session %}
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+          {% include "election/components/form_field.html" with field=field %}
+        {% endfor %}
+        <button type="submit" class="btn btn-primary submit-button">Submit Now</button>
+      </form>
+    {% else %}
+      <div class="alert alert-warning">No nomination session is currently open.</div>
+    {% endif %}
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    © Copyright 2025 by KBAA
+  </div>
+
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>

@@ -1,0 +1,481 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nomination Form - {{ session.name }}</title>
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    /* Colorful header stripe */
+    .header-stripe {
+      height: 18px;
+      background: linear-gradient(to right, 
+        #003d82 0%, #003d82 20%,
+        #f39c12 20%, #f39c12 40%,
+        #3498db 40%, #3498db 60%,
+        #e67e22 60%, #e67e22 80%,
+        #a4c639 80%, #a4c639 100%
+      );
+    }
+
+    .header-section {
+      background-color: white;
+      padding: 2rem 0;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .logo {
+      margin-bottom: 1rem;
+    }
+
+    .logo-text {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #e67e22;
+      letter-spacing: 2px;
+    }
+
+    .logo-text span {
+      color: #003d82;
+    }
+
+    .logo-subtext {
+      font-size: 1.2rem;
+      color: #003d82;
+      font-weight: 600;
+    }
+
+    .main-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin: 1.5rem 0 0.5rem;
+    }
+
+    .sub-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #34495e;
+      margin-bottom: 0.5rem;
+    }
+
+    .instruction-text {
+      color: #7f8c8d;
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-container {
+      max-width: 700px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .required {
+      color: #e74c3c;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+      background-color: #f9fafb;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #3498db;
+      background-color: white;
+    }
+
+    .form-control.is-invalid {
+      border-color: #e74c3c;
+    }
+
+    .invalid-feedback {
+      color: #e74c3c;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      display: block;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 2rem;
+      margin-top: 0.5rem;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .radio-option input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #3498db;
+    }
+
+    .radio-option label {
+      margin: 0;
+      cursor: pointer;
+      font-weight: 400;
+    }
+
+    .position-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .position-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .position-option input[type="radio"] {
+      margin-top: 0.25rem;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #3498db;
+    }
+
+    .position-option label {
+      margin: 0;
+      cursor: pointer;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .file-input-label {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background-color: #ecf0f1;
+      border: 1px solid #bdc3c7;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .file-input-label:hover {
+      background-color: #d5dbdb;
+    }
+
+    input[type="file"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .submit-button {
+      background-color: #dc143c;
+      color: white;
+      font-weight: 600;
+      padding: 0.875rem 2.5rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .submit-button:hover {
+      background-color: #b8102f;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 1.5rem;
+      background-color: #003d82;
+      color: white;
+      margin-top: 3rem;
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+    }
+
+    .alert-warning {
+      background-color: #fff3cd;
+      border: 1px solid #ffc107;
+      color: #856404;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      border: 1px solid #28a745;
+      color: #155724;
+    }
+
+    .alert-danger {
+      background-color: #f8d7da;
+      border: 1px solid #dc3545;
+      color: #721c24;
+    }
+
+    @media (max-width: 768px) {
+      .form-container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+
+      .main-title {
+        font-size: 1.5rem;
+      }
+
+      .sub-title {
+        font-size: 1.1rem;
+      }
+
+      .radio-group {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Colorful Header Stripe -->
+  <div class="header-stripe"></div>
+
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="logo">
+      <div class="logo-text">K<span>O</span>ICA</div>
+      <div class="logo-subtext">Bangladesh</div>
+    </div>
+    <h1 class="main-title">KBAA Executive Committee Election 2025</h1>
+    <h2 class="sub-title">Candidate Expression Of Interest</h2>
+    <p class="instruction-text">Please fill in all * required details, including your personal information.</p>
+  </div>
+
+  <!-- Form Container -->
+  <div class="form-container">
+    {% include "election/components/form_messages.html" %}
+
+    {% if session %}
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        <!-- Full Name -->
+        <div class="form-group">
+          <label class="form-label">
+            Full Name <span class="required">*</span>
+          </label>
+          {{ form.full_name }}
+          {% if form.full_name.errors %}
+            {% for error in form.full_name.errors %}
+              <span class="invalid-feedback">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <!-- Email Address -->
+        <div class="form-group">
+          <label class="form-label">
+            Email Address <span class="required">*</span>
+          </label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            {% for error in form.email.errors %}
+              <span class="invalid-feedback">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <!-- Phone Number -->
+        {% if form.phone_number %}
+        <div class="form-group">
+          <label class="form-label">
+            Phone Number <span class="required">*</span>
+          </label>
+          {{ form.phone_number }}
+          {% if form.phone_number.errors %}
+            {% for error in form.phone_number.errors %}
+              <span class="invalid-feedback">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Gender -->
+        <div class="form-group">
+          <label class="form-label">
+            Select Gender <span class="required">*</span>
+          </label>
+          <div class="radio-group">
+            {% for choice in form.gender %}
+              <div class="radio-option">
+                {{ choice.tag }}
+                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+              </div>
+            {% endfor %}
+          </div>
+          {% if form.gender.errors %}
+            {% for error in form.gender.errors %}
+              <span class="invalid-feedback">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <!-- Designation -->
+        <div class="form-group">
+          <label class="form-label">
+            Present Designation / Retired Designation <span class="required">*</span>
+          </label>
+          {{ form.designation }}
+          {% if form.designation.errors %}
+            {% for error in form.designation.errors %}
+              <span class="invalid-feedback">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <!-- Workplace Address -->
+        <div class="form-group">
+          <label class="form-label">
+            Present Organization & Department / Last Organization & Department <span class="required">*</span>
+          </label>
+          {{ form.workplace_address }}
+          {% if form.workplace_address.errors %}
+            {% for error in form.workplace_address.errors %}
+              <span class="invalid-feedback">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <!-- Last Training Date -->
+        {% if form.last_training_date %}
+        <div class="form-group">
+          <label class="form-label">
+            Last KOICA Training Date
+          </label>
+          {{ form.last_training_date }}
+          {% if form.last_training_date.errors %}
+            {% for error in form.last_training_date.errors %}
+              <span class="invalid-feedback">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Photo Upload -->
+        <div class="form-group">
+          <label class="form-label">
+            Candidate Photo (Please Upload Passport Size) <span class="required">*</span>
+          </label>
+          <div class="file-input-wrapper">
+            {{ form.photo }}
+          </div>
+          {% if form.photo.errors %}
+            {% for error in form.photo.errors %}
+              <span class="invalid-feedback">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <!-- Interested -->
+        <div class="form-group">
+          <label class="form-label">
+            Are You Interested In Becoming A Candidate For The KBAA Executive Committee Election 2025? <span class="required">*</span>
+          </label>
+          <div class="radio-group">
+            {% for choice in form.interested %}
+              <div class="radio-option">
+                {{ choice.tag }}
+                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+              </div>
+            {% endfor %}
+          </div>
+          {% if form.interested.errors %}
+            {% for error in form.interested.errors %}
+              <span class="invalid-feedback">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <!-- Desired Position -->
+        <div class="form-group">
+          <label class="form-label">
+            Desired Position In The KBAA Executive Committee <span class="required">*</span>
+          </label>
+          <div class="position-options">
+            {% for choice in form.desired_position %}
+              <div class="position-option">
+                {{ choice.tag }}
+                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+              </div>
+            {% endfor %}
+          </div>
+          {% if form.desired_position.errors %}
+            {% for error in form.desired_position.errors %}
+              <span class="invalid-feedback">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-group" style="margin-top: 2rem;">
+          <button type="submit" class="submit-button">Submit Now</button>
+        </div>
+      </form>
+    {% else %}
+      <div class="alert alert-warning">No nomination session is currently open.</div>
+    {% endif %}
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    © Copyright 2025 by KBAA
+  </div>
+
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
