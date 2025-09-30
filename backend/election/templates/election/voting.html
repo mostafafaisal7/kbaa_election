@@ -327,11 +327,67 @@
             color: #7f8c8d;
             margin-top: 0.5rem;
             font-weight: 500;
+            display: none; /* Hidden - no vote counts */
         }
 
-        .candidate-radio:checked + .candidate-label .vote-count {
-            color: #28a745;
+        /* Success Alert */
+        .success-alert {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 1.25rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 2.7s;
+        }
+
+        .success-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .success-icon {
+            font-size: 2rem;
+            animation: pop 0.4s ease-out;
+        }
+
+        .success-text {
+            font-size: 1.1rem;
             font-weight: 600;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateX(400px);
+            }
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
 
         .submit-button {
@@ -531,10 +587,6 @@
                             <div class="candidate-organization">{{ candidate.workplace_address }}</div>
                             
                             <button type="button" class="vote-button" onclick="selectCandidate('{{ candidate.id }}', event)">Vote</button>
-                            
-                            <div class="vote-count" data-candidate-id="{{ candidate.id }}">
-                                Total Vote: <span class="count">{{ candidate.vote_count }}</span>
-                            </div>
                         </label>
                     </div>
                     {% endfor %}
@@ -546,12 +598,44 @@
         </form>
     </div>
 
+    <!-- Success Alert (Auto-dismiss) -->
+    {% if show_success %}
+    <div class="success-alert" id="success-alert">
+        <div class="success-content">
+            <span class="success-icon">✓</span>
+            <span class="success-text">Thank you for your vote!</span>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if show_complete %}
+    <div class="success-alert" id="success-alert">
+        <div class="success-content">
+            <span class="success-icon">🎉</span>
+            <span class="success-text">Thank you! All votes submitted successfully!</span>
+        </div>
+    </div>
+    {% endif %}
+
     <div class="footer">
         © Copyright 2025 by KBAA
     </div>
 
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script>
+        // Auto-dismiss success alert after 3 seconds
+        const successAlert = document.getElementById('success-alert');
+        if (successAlert) {
+            setTimeout(() => {
+                successAlert.remove();
+                // Clean URL by removing query parameters
+                const url = new URL(window.location);
+                url.searchParams.delete('voted');
+                url.searchParams.delete('completed');
+                window.history.replaceState({}, '', url);
+            }, 3000);
+        }
+
         // Toggle personal information section
         function toggleSection(sectionId) {
             const section = document.getElementById(sectionId);
@@ -574,9 +658,6 @@
             // Select the radio button
             const radio = document.getElementById(`candidate_${candidateId}`);
             radio.checked = true;
-
-            // Update vote count for selected candidate (optimistic update)
-            updateVoteCount(candidateId);
 
             // Disable all candidate cards and buttons
             const allCandidateLabels = document.querySelectorAll('.candidate-label');
@@ -603,36 +684,7 @@
             selectedButton.style.backgroundColor = '#6c757d';
         }
 
-        function updateVoteCount(candidateId) {
-            // Simulate immediate vote count increase (optimistic update)
-            const voteCountElement = document.querySelector(`.vote-count[data-candidate-id="${candidateId}"] .count`);
-            if (voteCountElement) {
-                const currentCount = parseInt(voteCountElement.textContent) || 0;
-                voteCountElement.textContent = currentCount + 1;
-            }
-        }
-
-        // Fetch real-time vote counts every 5 seconds
-        function fetchVoteCounts() {
-            const positionId = document.querySelector('input[name="position_id"]').value;
-            
-            fetch(`/api/vote_counts/${positionId}/`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(item => {
-                        const voteCountElement = document.querySelector(`.vote-count[data-candidate-id="${item.nomination_id}"] .count`);
-                        if (voteCountElement) {
-                            voteCountElement.textContent = item.count;
-                        }
-                    });
-                })
-                .catch(error => console.error('Error fetching vote counts:', error));
-        }
-
-        // Update vote counts every 5 seconds
-        setInterval(fetchVoteCounts, 5000);
-
-        // Form submission - Use regular form submit to allow Django redirects
+        // Form submission
         const submitBtn = document.getElementById('submit-btn');
         const form = document.getElementById('voting-form');
 

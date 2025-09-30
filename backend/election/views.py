@@ -63,7 +63,12 @@ def get_next_available_position(session, positions, current_position):
 
 def voting_view(request):
     session = Session.objects.filter(status='Voting Open').first()
+    
+    # Check if results are published - redirect to results page
     if not session:
+        published_session = Session.objects.filter(status='Results Published').first()
+        if published_session:
+            return redirect('public_results')
         return render(request, 'election/voting_closed.html')
 
     # Get all positions ordered
@@ -88,7 +93,8 @@ def voting_view(request):
                 break
         
         if not position:
-            return render(request, 'election/voting_complete.html')
+            # No positions available - redirect to fresh voting with completion message
+            return redirect('/voting/?completed=true')
 
     # Fetch existing voter if any
     voter = None
@@ -105,24 +111,6 @@ def voting_view(request):
         ).exists()
 
     if request.method == 'POST':
-        # Handle AJAX request for real-time vote count
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            candidate_id = request.POST.get('candidate')
-            if candidate_id:
-                # Get updated vote count for this candidate
-                vote_count = Vote.objects.filter(
-                    session=session,
-                    position=position,
-                    nominee_id=candidate_id
-                ).count()
-                
-                return JsonResponse({
-                    'success': True,
-                    'candidate_id': candidate_id,
-                    'vote_count': vote_count
-                })
-
-        # Handle form submission
         form = VoteForm(request.POST, session=session, position=position)
         if form.is_valid():
             # Create or update voter
@@ -146,7 +134,8 @@ def voting_view(request):
                 if next_position:
                     return redirect(f'/voting/?position={next_position.id}&email={voter.email}')
                 else:
-                    return render(request, 'election/voting_complete.html')
+                    # All done - show completion alert
+                    return redirect('/voting/?completed=true')
 
             # Save vote
             candidate_id = form.cleaned_data['candidate']
@@ -162,9 +151,10 @@ def voting_view(request):
             next_position = get_next_available_position(session, positions, position)
             
             if next_position:
-                return redirect(f'/voting/?position={next_position.id}&email={voter.email}')
+                return redirect(f'/voting/?position={next_position.id}&email={voter.email}&voted=true')
             else:
-                return render(request, 'election/voting_complete.html')
+                # All positions voted - show completion alert and fresh form
+                return redirect('/voting/?completed=true')
     else:
         form = VoteForm(session=session, position=position)
         
@@ -177,26 +167,30 @@ def voting_view(request):
             form.fields['workplace_address'].initial = voter.workplace_address
             form.fields['last_training_date'].initial = voter.last_training_date
 
-    # Get candidates with vote counts
+    # Get candidates without vote counts
     candidates = Nomination.objects.filter(
         session=session, 
         desired_position=position, 
         approved=True
-    ).annotate(
-        vote_count=Count('votes', filter=Q(votes__session=session, votes__position=position))
     )
 
-    return render(request, 'election/voting.html', {
+    # Check if showing success message
+    show_success = request.GET.get('voted') == 'true'
+    show_complete = request.GET.get('completed') == 'true'
+
+    context = {
         'form': form,
         'position': position,
         'candidates': candidates,
         'voter': voter,
         'session': session,
         'already_voted': already_voted,
-        'is_first_vote': not voter,  # True if this is their first vote
-    })
-
-
+        'is_first_vote': not voter,
+        'show_success': show_success,
+        'show_complete': show_complete,
+    }
+    
+    return render(request, 'election/voting.html', context)
 # --- API for real-time vote counts ---
 def vote_counts_api(request, position_id):
     session = Session.objects.filter(status='Voting Open').first()
@@ -208,3 +202,48 @@ def vote_counts_api(request, position_id):
 
     data = [{'nomination_id': k, 'count': v} for k, v in vote_counts.items()]
     return JsonResponse(data, safe=False)
+
+
+
+# Add this to your existing views.py
+
+def public_results_view(request):
+    """Public results page for voters"""
+    
+    # Get session with published results
+    session = Session.objects.filter(status='Results Published').first()
+    
+    if not session:
+        # If no published results, check if voting is still open
+        session = Session.objects.filter(status='Voting Open').first()
+        if session:
+            return render(request, 'election/results_not_published.html', {'session': session})
+        else:
+            return render(request, 'election/results_not_published.html')
+    
+    # Get results by position
+    positions = Position.objects.all().order_by('order')
+    results = []
+    
+    for position in positions:
+        candidates = Nomination.objects.filter(
+            session=session,
+            desired_position=position,
+            approved=True
+        ).annotate(
+            vote_count=Count('votes', filter=Q(votes__session=session, votes__position=position))
+        ).order_by('-vote_count')
+        
+        if candidates.exists():
+            results.append({
+                'position': position,
+                'candidates': candidates,
+                'total_votes': sum(c.vote_count for c in candidates)
+            })
+    
+    context = {
+        'results': results,
+        'session': session,
+    }
+    
+    return render(request, 'election/public_results.html', context)

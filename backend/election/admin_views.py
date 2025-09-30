@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Count, Q
 from .models import Session, Position, Voter, Nomination, Vote
+from django.contrib import messages
+
 
 
 @staff_member_required
@@ -164,3 +166,74 @@ def voting_control(request):
     }
     
     return render(request, 'admin/voting_control.html', context)
+
+
+@staff_member_required
+def publish_results(request, session_id):
+    """Publish election results and close voting"""
+    if request.method == 'POST':
+        session = Session.objects.get(id=session_id)
+        session.status = 'Results Published'
+        session.voting_open = False
+        session.save()
+        
+        messages.success(request, f'Results published for {session.name}. Voting is now closed.')
+    
+    return redirect('admin_voting_control')
+
+
+@staff_member_required
+def edit_session(request, session_id):
+    """Edit session - simplified form"""
+    session = Session.objects.get(id=session_id)
+    
+    if request.method == 'POST':
+        # Update session fields
+        session.name = request.POST.get('name')
+        session.status = request.POST.get('status')
+        session.start_voting = request.POST.get('start_voting')
+        session.end_voting = request.POST.get('end_voting')
+        session.save()
+        
+        messages.success(request, f'Session "{session.name}" updated successfully!')
+        return redirect('admin_voting_control')
+    
+    context = {
+        'session': session,
+    }
+    
+    return render(request, 'admin/edit_session.html', context)
+
+
+@staff_member_required
+def candidate_detail(request, candidate_id):
+    """View and edit candidate details"""
+    candidate = Nomination.objects.get(id=candidate_id)
+    
+    if request.method == 'POST':
+        # Update candidate fields
+        candidate.full_name = request.POST.get('full_name')
+        candidate.email = request.POST.get('email')
+        candidate.gender = request.POST.get('gender')
+        candidate.designation = request.POST.get('designation')
+        candidate.workplace_address = request.POST.get('workplace_address')
+        candidate.approved = request.POST.get('approved') == 'on'
+        
+        # Handle photo upload
+        if request.FILES.get('photo'):
+            candidate.photo = request.FILES['photo']
+        
+        candidate.save()
+        
+        messages.success(request, f'Candidate "{candidate.full_name}" updated successfully!')
+        return redirect('admin_candidates')
+    
+    # Get vote count
+    vote_count = Vote.objects.filter(nominee=candidate).count()
+    
+    context = {
+        'candidate': candidate,
+        'vote_count': vote_count,
+    }
+    
+    return render(request, 'admin/candidate_detail.html', context)

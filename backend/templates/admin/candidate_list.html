@@ -54,7 +54,7 @@
                 </td>
                 <td>{{ candidate.vote_count }}</td>
                 <td>
-                    <a href="/admin/election/nomination/{{ candidate.id }}/change/" class="details-btn">Details</a>
+                    <a href="{% url 'admin_candidate_detail' candidate.id %}" class="details-btn">Details</a>
                 </td>
             </tr>
             {% empty %}

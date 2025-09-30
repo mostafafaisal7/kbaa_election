@@ -1,0 +1,105 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Edit Session{% endblock %}
+
+{% block page_title %}Edit Session{% endblock %}
+
+{% block content %}
+<div class="table-container">
+    <div class="table-header">
+        <h2>Edit Session: {{ session.name }}</h2>
+        <a href="{% url 'admin_voting_control' %}" class="filter-btn">
+            ← Back
+        </a>
+    </div>
+
+    <form method="post" style="margin-top: 2rem;">
+        {% csrf_token %}
+        
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">
+                Session Name <span style="color: #e74c3c;">*</span>
+            </label>
+            <input type="text" 
+                   name="name" 
+                   value="{{ session.name }}" 
+                   required
+                   style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 4px; background-color: #f9fafb; font-size: 0.95rem;">
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">
+                Status <span style="color: #e74c3c;">*</span>
+            </label>
+            <select name="status" 
+                    required
+                    style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 4px; background-color: #f9fafb; font-size: 0.95rem;">
+                <option value="Nominations Open" {% if session.status == 'Nominations Open' %}selected{% endif %}>Nominations Open</option>
+                <option value="Voting Open" {% if session.status == 'Voting Open' %}selected{% endif %}>Voting Open</option>
+                <option value="Results Published" {% if session.status == 'Results Published' %}selected{% endif %}>Results Published</option>
+                <option value="Closed" {% if session.status == 'Closed' %}selected{% endif %}>Closed</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">
+                Voting Start Date <span style="color: #e74c3c;">*</span>
+            </label>
+            <input type="datetime-local" 
+                   name="start_voting" 
+                   value="{{ session.start_voting|date:'Y-m-d\TH:i' }}" 
+                   required
+                   style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 4px; background-color: #f9fafb; font-size: 0.95rem;">
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">
+                Voting End Date <span style="color: #e74c3c;">*</span>
+            </label>
+            <input type="datetime-local" 
+                   name="end_voting" 
+                   value="{{ session.end_voting|date:'Y-m-d\TH:i' }}" 
+                   required
+                   style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 4px; background-color: #f9fafb; font-size: 0.95rem;">
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
+            <button type="submit" class="details-btn">
+                Save Changes
+            </button>
+            
+            {% if session.status == 'Voting Open' %}
+            <a href="{% url 'admin_publish_results' session.id %}" 
+               onclick="event.preventDefault(); if(confirm('Are you sure you want to publish results? This will stop voting.')) { document.getElementById('publish-form').submit(); }"
+               class="details-btn" 
+               style="background: #ec4899; text-decoration: none; display: inline-block;">
+                📊 Publish Results
+            </a>
+            {% endif %}
+            
+            <a href="{% url 'admin_voting_control' %}" 
+               class="details-btn" 
+               style="background: #6b7280; text-decoration: none;">
+                Cancel
+            </a>
+        </div>
+    </form>
+
+    {% if session.status == 'Voting Open' %}
+    <form id="publish-form" method="post" action="{% url 'admin_publish_results' session.id %}" style="display: none;">
+        {% csrf_token %}
+    </form>
+    {% endif %}
+</div>
+
+<!-- Display Messages -->
+{% if messages %}
+<div style="position: fixed; top: 2rem; right: 2rem; z-index: 9999;">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" style="margin-bottom: 1rem; min-width: 300px;">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
