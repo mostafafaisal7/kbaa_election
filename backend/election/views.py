@@ -35,8 +35,8 @@ def nomination_view(request):
                 messages.error(request, "You have already submitted a nomination for this session.")
             else:
                 nomination.save()
-                messages.success(request, "Nomination submitted successfully!")
-                return redirect('nomination')
+                # Redirect to thank you page instead of showing message
+                return redirect('nomination_success')
     else:
         form = NominationForm()
 
@@ -44,6 +44,12 @@ def nomination_view(request):
         'form': form,
         'session': current_session
     })
+
+
+def nomination_success_view(request):
+    """Thank you page after successful nomination"""
+    return render(request, 'election/nomination_success.html')
+
 
 
 def get_next_available_position(session, positions, current_position):

@@ -237,3 +237,37 @@ def candidate_detail(request, candidate_id):
     }
     
     return render(request, 'admin/candidate_detail.html', context)
+
+
+@staff_member_required
+def voter_detail(request, voter_id):
+    """View and edit voter details"""
+    voter = Voter.objects.get(id=voter_id)
+    
+    if request.method == 'POST':
+        # Update voter fields
+        voter.full_name = request.POST.get('full_name')
+        voter.email = request.POST.get('email')
+        voter.gender = request.POST.get('gender')
+        voter.designation = request.POST.get('designation')
+        voter.workplace_address = request.POST.get('workplace_address')
+        
+        # Handle optional fields
+        last_training_date = request.POST.get('last_training_date')
+        if last_training_date:
+            voter.last_training_date = last_training_date
+        
+        voter.save()
+        
+        messages.success(request, f'Voter "{voter.full_name}" updated successfully!')
+        return redirect('admin_voters')
+    
+    # Get vote count for this voter
+    votes_cast = Vote.objects.filter(voter=voter).count()
+    
+    context = {
+        'voter': voter,
+        'votes_cast': votes_cast,
+    }
+    
+    return render(request, 'admin/voter_detail.html', context)

@@ -43,7 +43,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="/admin/election/voter/{{ voter.id }}/change/" class="details-btn">Details</a>
+                    <button class="details-btn" onclick="window.location.href='{% url 'admin_voter_detail' voter.id %}'">Details</button>
                 </td>
             </tr>
             {% empty %}
