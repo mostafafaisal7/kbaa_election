@@ -5,34 +5,21 @@ backend/media/candidate_photos/68766e19c1a972173650dedb-68767df05269d8c2a1789dc2
 backend/media/candidate_photos/Corporate-Portraits-1783_hiBX3EV.jpg
 =======
 # Python
+# Python
+__pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+*.pyc
+*.pyo
+*.pyd
 
 # Virtual Environment
 venv/
 env/
 ENV/
-env.bak/
-venv.bak/
+.venv/
 virtualenv/
 
 # Django
@@ -40,45 +27,41 @@ virtualenv/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+*.sqlite3
 
-# Django Static Files
+# Django Static & Media
 /staticfiles/
-/static/
-staticfiles/
-static_collected/
-
-# Media Files
+/static_collected/
+backend/staticfiles/
+backend/static_collected/
 /media/
+backend/media/
 *.jpg
 *.jpeg
 *.png
 *.gif
-*.svg
 *.pdf
-*.mp4
-*.avi
 
-# Exception: Keep default avatar if you have one
-!static/images/default-avatar.png
-
-# Django migrations (optional - uncomment if you want to ignore)
-# **/migrations/*.py
-# !**/migrations/__init__.py
-
-# Environment Variables
+# Environment Variables - IMPORTANT!
 .env
+.env.*
+*.env
 .env.local
 .env.production
-.env.*.local
-*.env
+.env.development
+
+# Docker
+docker-compose.override.yml
+postgres_data/
+*.dockerignore
 
 # IDE - VSCode
+.vscode/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
-!.vscode/extensions.json
-.history
+.history/
 
 # IDE - PyCharm
 .idea/
@@ -86,7 +69,7 @@ static_collected/
 *.iws
 .idea_modules/
 
-# IDE - Sublime Text
+# IDE - Sublime
 *.sublime-project
 *.sublime-workspace
 
@@ -99,6 +82,7 @@ static_collected/
 ehthumbs.db
 Thumbs.db
 Desktop.ini
+$RECYCLE.BIN/
 
 # Backup files
 *.bak
@@ -109,25 +93,36 @@ Desktop.ini
 
 # Testing
 .tox/
-.nox/
 .coverage
 .coverage.*
 .cache
+htmlcov/
 .pytest_cache/
 nosetests.xml
 coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-htmlcov/
 
-# Documentation
-docs/_build/
-site/
+# Logs
+*.log
+logs/
+django_errors.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Package files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+.eggs/
 
 # Jupyter Notebook
 .ipynb_checkpoints
-*.ipynb
 
 # pyenv
 .python-version
@@ -136,98 +131,32 @@ site/
 celerybeat-schedule
 celerybeat.pid
 
-# SageMath parsed files
-*.sage.py
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# pytype static type analyzer
-.pytype/
-
-# Cython debug symbols
-cython_debug/
-
-# Database
-*.sqlite
-*.sqlite3
-*.db
-
-# Logs
-*.log
-logs/
-django_errors.log
-
-# Compiled files
-*.pyc
-__pycache__/
-
-# Local configuration
-local_settings.py
-
-# Passenger (cPanel deployment)
+# Passenger (cPanel)
 passenger_wsgi.pyc
 tmp/
+tmp/*
 
-# Collected static files
-/staticfiles/
-/static_root/
-
-# User uploaded files
-/media/candidate_photos/
-/media/uploads/
-
-# Docker
-docker-compose.override.yml
-.dockerignore
-
-# Package files
-*.zip
-*.tar.gz
-*.rar
-
-# Node modules (if you use any frontend build tools)
-node_modules/
-npm-debug.log
-yarn-error.log
-
-# Sensitive data
+# Sensitive files
 secrets.json
 credentials.json
 *.key
 *.pem
 *.crt
 
-# Temporary files
-*.tmp
-*.temp
-temp/
-tmp/
+# Database dumps
+*.sql
+*.dump
 
-# Cache
-.cache/
-*.cache
-
-# Session files
-django_session/
+# Node (if you add frontend)
+node_modules/
+package-lock.json
+yarn.lock
 
 # Custom project specific
-/backend/production_settings.py
+# backend/production_settings.py.secret
+*.secret
+# Custom project specific
+# /backend/production_settings.py
 /config/production.pybackend/media/candidate_photos/68766e19c1a972173650dedb-68767df05269d8c2a1789dc2_0GFUnY3.jpg
 >>>>>>> v1.0.3
 backend/media/candidate_photos/Corporate-Portraits-1783.jpg
