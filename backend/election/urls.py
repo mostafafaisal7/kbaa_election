@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('', views.home, name='home'),  # Add this as the first pattern
+
     path('nomination/', views.nomination_view, name='nomination'),
     path('nomination/success/', views.nomination_success_view, name='nomination_success'),  # Add this line
     path('voting/', views.voting_view, name='voting'),

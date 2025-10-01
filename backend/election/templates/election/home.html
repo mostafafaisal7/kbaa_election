@@ -1,0 +1,436 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KBAA Executive Committee Election 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-stripe {
+            height: 18px;
+            background: linear-gradient(to right, 
+                #003d82 0%, #003d82 20%,
+                #f39c12 20%, #f39c12 40%,
+                #3498db 40%, #3498db 60%,
+                #e67e22 60%, #e67e22 80%,
+                #a4c639 80%, #a4c639 100%
+            );
+        }
+
+        .header-section {
+            background-color: white;
+            padding: 3rem 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-text {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #e67e22;
+            letter-spacing: 2px;
+        }
+
+        .logo-text span {
+            color: #003d82;
+        }
+
+        .logo-subtext {
+            font-size: 1.3rem;
+            color: #003d82;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .main-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 2rem 0 1rem;
+        }
+
+        .sub-title {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-content {
+            width: 100%;
+            padding: 3rem 0;
+        }
+
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .welcome-text h2 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-text p {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .action-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+
+        .action-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+
+        .action-card.nomination {
+            border-color: #3498db;
+        }
+
+        .action-card.nomination:hover {
+            border-color: #2980b9;
+            background: linear-gradient(135deg, #ffffff 0%, #ebf8ff 100%);
+        }
+
+        .action-card.voting {
+            border-color: #28a745;
+        }
+
+        .action-card.voting:hover {
+            border-color: #218838;
+            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+        }
+
+        .action-card.results {
+            border-color: #e67e22;
+        }
+
+        .action-card.results:hover {
+            border-color: #d35400;
+            background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
+        }
+
+        .card-icon {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .card-description {
+            font-size: 1rem;
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .card-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .action-card.nomination .card-button {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .action-card.nomination .card-button:hover {
+            background: linear-gradient(135deg, #2980b9, #21618c);
+            transform: scale(1.05);
+        }
+
+        .action-card.voting .card-button {
+            background: linear-gradient(135deg, #28a745, #218838);
+        }
+
+        .action-card.voting .card-button:hover {
+            background: linear-gradient(135deg, #218838, #1e7e34);
+            transform: scale(1.05);
+        }
+
+        .action-card.results .card-button {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+        }
+
+        .action-card.results .card-button:hover {
+            background: linear-gradient(135deg, #d35400, #ba4a00);
+            transform: scale(1.05);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-open {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .status-closed {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-upcoming {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .info-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 3rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .info-section h3 {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-section li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 1rem;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .info-section li:last-child {
+            border-bottom: none;
+        }
+
+        .info-section li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .admin-link {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1.5rem;
+        }
+
+        .admin-link a {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .admin-link a:hover {
+            color: #111827;
+            text-decoration: underline;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: #003d82;
+            color: white;
+            margin-top: auto;
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 1.8rem;
+            }
+
+            .welcome-text h2 {
+                font-size: 1.5rem;
+            }
+
+            .action-cards {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .action-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .card-icon {
+                font-size: 3.5rem;
+            }
+
+            .card-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-stripe"></div>
+
+    <div class="header-section">
+        <div class="logo">
+            <div class="logo-text">K<span>O</span>ICA</div>
+            <div class="logo-subtext">Bangladesh</div>
+        </div>
+        <h1 class="main-title">KBAA Executive Committee Election 2025</h1>
+        <p class="sub-title">Korea International Cooperation Agency - Bangladesh Alumni Association</p>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="welcome-text">
+                <h2>Welcome to the Election Portal</h2>
+                <p>
+                    Participate in shaping the future of KBAA by nominating candidates, casting your vote, 
+                    and viewing election results. Your voice matters in building a stronger alumni community.
+                </p>
+            </div>
+
+            <div class="action-cards">
+                <!-- Nomination Card -->
+                <a href="{% url 'nomination' %}" class="action-card nomination">
+                    {% if nomination_open %}
+                        <span class="status-badge status-open">Now Open</span>
+                        {% else %}
+                        <span class="status-badge status-closed">Closed</span>
+                        {% endif %}
+                    <span class="card-icon">📝</span>
+                    <h3 class="card-title">Nomination</h3>
+                    <p class="card-description">
+                        Submit your nomination for the Executive Committee positions and be part of the leadership team.
+                    </p>
+                    <button class="card-button">Submit Nomination</button>
+                </a>
+
+                <!-- Voting Card -->
+                <a href="{% url 'voting' %}" class="action-card voting">
+                    {% if voting_open %}
+                    <span class="status-badge status-open">Now Open</span>
+                    {% else %}
+                    <span class="status-badge status-closed">Closed</span>
+                    {% endif %}
+                    <span class="card-icon">🗳️</span>
+                    <h3 class="card-title">Voting</h3>
+                    <p class="card-description">
+                        Cast your vote for candidates running for various positions in the Executive Committee.
+                    </p>
+                    <button class="card-button">Cast Your Vote</button>
+                </a>
+
+                <!-- Results Card -->
+                <a href="{% url 'public_results' %}" class="action-card results">
+                    {% if results_published %}
+                        <span class="status-badge status-open">Now Showing</span>
+                        {% else %}
+                        <span class="status-badge status-closed">Closed</span>
+                        {% endif %}
+                    <span class="card-icon">🏆</span>
+                    <h3 class="card-title">Results</h3>
+                    <p class="card-description">
+                        View the official election results and meet your newly elected Executive Committee members.
+                    </p>
+                    <button class="card-button">View Results</button>
+                </a>
+            </div>
+
+            <div class="info-section">
+                <h3>📋 Election Information</h3>
+                <ul>
+                    <!-- <li>Nomination period is currently open for all positions</li> -->
+                    <!-- <li>All KOICA Bangladesh alumni are eligible to vote</li> -->
+                    <li>Each member can cast one vote per position</li>
+                    <li>Results will be published immediately after voting closes</li>
+                    <li>For questions, contact the election committee</li>
+                </ul>
+            </div>
+
+            <div class="admin-link">
+                <a href="{% url 'admin_dashboard' %}">🔐 Admin Panel Access</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        © Copyright 2025 by KBAA
+    </div>
+</body>
+</html>

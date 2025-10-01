@@ -7,6 +7,9 @@ from .forms import NominationForm, VoteForm
 from .models import Session, Position, Voter, Nomination, Vote
 
 
+
+
+
 # --- Helper for vote counts ---
 def get_vote_counts(session, position):
     votes = (
@@ -16,6 +19,22 @@ def get_vote_counts(session, position):
     )
     return {v['nominee_id']: v['count'] for v in votes}
 
+
+
+def home(request):
+    """Home page with main navigation"""
+    current_session = Session.objects.filter(
+        status__in=['Nominations Open', 'Voting Open', 'Results Published']
+    ).first()
+    
+    context = {
+        'current_session': current_session,
+        'nomination_open': current_session and current_session.status == 'Nominations Open',
+        'voting_open': current_session and current_session.status == 'Voting Open',
+        'results_published': current_session and current_session.status == 'Results Published',
+    }
+    
+    return render(request, 'election/home.html', context)
 
 def nomination_view(request):
     # Get the current open nomination session

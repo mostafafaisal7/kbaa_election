@@ -49,7 +49,7 @@ def admin_dashboard(request):
 
 @staff_member_required
 def candidate_list(request):
-    """List all candidates with vote counts"""
+    """List all candidates with search and filter functionality"""
     
     current_session = Session.objects.filter(
         status__in=['Nominations Open', 'Voting Open']
@@ -58,16 +58,56 @@ def candidate_list(request):
     if not current_session:
         current_session = Session.objects.last()
     
-    # Get candidates with vote counts
+    # Start with base queryset
     candidates = Nomination.objects.filter(
         session=current_session
     ).annotate(
         vote_count=Count('votes')
-    ).order_by('-vote_count')
+    )
+    
+    # Search functionality
+    search_query = request.GET.get('search', '')
+    if search_query:
+        candidates = candidates.filter(
+            Q(full_name__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(designation__icontains=search_query) |
+            Q(workplace_address__icontains=search_query)
+        )
+    
+    # Filter by gender
+    gender_filter = request.GET.get('gender', '')
+    if gender_filter:
+        candidates = candidates.filter(gender=gender_filter)
+    
+    # Filter by position
+    position_filter = request.GET.get('position', '')
+    if position_filter:
+        candidates = candidates.filter(desired_position_id=position_filter)
+    
+    # Filter by approval status
+    approval_filter = request.GET.get('approval', '')
+    if approval_filter == 'approved':
+        candidates = candidates.filter(approved=True)
+    elif approval_filter == 'pending':
+        candidates = candidates.filter(approved=False)
+    
+    # Sorting
+    sort_by = request.GET.get('sort', '-vote_count')
+    candidates = candidates.order_by(sort_by)
+    
+    # Get positions for filter dropdown
+    positions = Position.objects.all().order_by('order')
     
     context = {
         'candidates': candidates,
         'current_session': current_session,
+        'positions': positions,
+        'search_query': search_query,
+        'gender_filter': gender_filter,
+        'position_filter': position_filter,
+        'approval_filter': approval_filter,
+        'sort_by': sort_by,
     }
     
     return render(request, 'admin/candidate_list.html', context)

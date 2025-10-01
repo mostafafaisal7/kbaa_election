@@ -53,7 +53,7 @@ class Nomination(models.Model):
     last_training_date = models.DateField(blank=True, null=True)  # NEW FIELD
     interested = models.BooleanField(default=True)
     desired_position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True)
-    approved = models.BooleanField(default=False)
+    approved = models.BooleanField(default=True)
     photo = models.ImageField(
         upload_to="candidate_photos/",
         validators=[FileExtensionValidator(["jpg", "jpeg", "png"])],
