@@ -598,7 +598,7 @@
         </form>
     </div>
 
-    <!-- Success Alert (Auto-dismiss) -->
+    <!-- Success Alert (Auto-dismiss) - For intermediate votes -->
     {% if show_success %}
     <div class="success-alert" id="success-alert">
         <div class="success-content">
@@ -608,14 +608,33 @@
     </div>
     {% endif %}
 
+    <!-- Completion Modal - For final submission -->
     {% if show_complete %}
-    <div class="success-alert" id="success-alert">
-        <div class="success-content">
-            <span class="success-icon">🎉</span>
-            <span class="success-text">Thank you! All votes submitted successfully!</span>
+    <div class="modal fade show" id="completionModal" tabindex="-1" style="display: flex !important; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; align-items: center; justify-content: center;" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-backdrop fade show" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10001;"></div>
+        <div class="modal-dialog modal-dialog-centered" style="z-index: 10002; margin: 0; position: relative; max-width: 500px; width: 90%;">
+            <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5); background: white;">
+                <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 2.5rem; text-align: center; color: white;">
+                    <div class="celebration-icon" style="font-size: 5rem; margin-bottom: 1rem; line-height: 1;">🎉</div>
+                    <h3 style="font-weight: 700; margin: 0; font-size: 2rem; color: white;">All Done!</h3>
+                </div>
+                <div style="padding: 2.5rem; text-align: center; background: white;">
+                    <p style="font-size: 1.15rem; color: #2d3748; margin: 0; font-weight: 500; line-height: 1.6;">
+                        Thank you for participating in the KBAA Executive Committee Election 2025. Your votes have been successfully recorded!
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
     {% endif %}
+
+    <style>
+        @keyframes celebration {
+            0% { transform: scale(0) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+    </style>
 
     <div class="footer">
         © Copyright 2025 by KBAA
@@ -623,7 +642,7 @@
 
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script>
-        // Auto-dismiss success alert after 3 seconds
+        // Auto-dismiss success alert after 3 seconds (for intermediate votes)
         const successAlert = document.getElementById('success-alert');
         if (successAlert) {
             setTimeout(() => {
@@ -631,10 +650,29 @@
                 // Clean URL by removing query parameters
                 const url = new URL(window.location);
                 url.searchParams.delete('voted');
-                url.searchParams.delete('completed');
                 window.history.replaceState({}, '', url);
             }, 3000);
         }
+
+        // Handle completion modal (final submission)
+        {% if show_complete %}
+        document.addEventListener('DOMContentLoaded', function() {
+            // Prevent body scroll when modal is open
+            document.body.style.overflow = 'hidden';
+            
+            // Add celebration animation
+            const celebrationIcon = document.querySelector('.celebration-icon');
+            if (celebrationIcon) {
+                celebrationIcon.style.animation = 'celebration 0.6s ease-out';
+            }
+            
+            // Auto-close after 4 seconds and redirect
+            setTimeout(() => {
+                document.body.style.overflow = 'auto';
+                window.location.href = '{% url "voting" %}';
+            }, 4000);
+        });
+        {% endif %}
 
         // Toggle personal information section
         function toggleSection(sectionId) {
@@ -650,16 +688,14 @@
             event.stopPropagation();
 
             if (voteSelected) {
-                return; // Prevent selecting again
+                return;
             }
 
             voteSelected = true;
 
-            // Select the radio button
             const radio = document.getElementById(`candidate_${candidateId}`);
             radio.checked = true;
 
-            // Disable all candidate cards and buttons
             const allCandidateLabels = document.querySelectorAll('.candidate-label');
             const allVoteButtons = document.querySelectorAll('.vote-button');
 
@@ -672,7 +708,6 @@
                 button.style.pointerEvents = 'none';
             });
 
-            // Change the selected candidate's button
             const selectedButton = event.target;
             const selectedLabel = selectedButton.closest('.candidate-label');
             
@@ -689,7 +724,6 @@
         const form = document.getElementById('voting-form');
 
         form.addEventListener('submit', function(e) {
-            // Check if a candidate is selected
             const selectedCandidate = document.querySelector('.candidate-radio:checked');
             if (!selectedCandidate) {
                 e.preventDefault();
@@ -697,7 +731,6 @@
                 return false;
             }
 
-            // Disable submit button to prevent double submission
             submitBtn.disabled = true;
             submitBtn.textContent = 'Saving...';
         });
