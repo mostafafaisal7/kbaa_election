@@ -149,9 +149,9 @@ package-lock.json
 yarn.lock
 
 # Custom project specific
-backend/production_settings.py.secret
+# backend/production_settings.py.secret
 *.secret
 # Custom project specific
-/backend/production_settings.py
+# /backend/production_settings.py
 /config/production.pybackend/media/candidate_photos/68766e19c1a972173650dedb-68767df05269d8c2a1789dc2_0GFUnY3.jpg
 backend/media/candidate_photos/Corporate-Portraits-1783.jpg
