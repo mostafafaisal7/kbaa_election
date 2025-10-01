@@ -1,11 +1,15 @@
 from .settings import *
 import os
 
-# Production settings
 DEBUG = False
-ALLOWED_HOSTS = ['*']  # Will update with actual domain later
+ALLOWED_HOSTS = ['abedintechemail.com', 'www.abedintechemail.com', '*']
 
-# Security (enable after SSL)
+# Use environment variable for SECRET_KEY
+SECRET_KEY = os.environ.get('SECRET_KEY', SECRET_KEY)  # Falls back to settings.py
+
+# Database - already using SQLite (no password needed)
+
+# Security
 SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
