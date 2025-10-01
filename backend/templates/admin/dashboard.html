@@ -336,10 +336,10 @@
                     <span class="nav-icon">⚙️</span>
                     Voting Control
                 </a>
-                <a href="/admin/" class="nav-item">
+                <!-- <a href="/admin/" class="nav-item">
                     <span class="nav-icon">📝</span>
                     Django Admin
-                </a>
+                </a> -->
             </nav>
 
             <div class="user-profile">
@@ -355,10 +355,10 @@
         <main class="main-content">
             <div class="header">
                 <h1 class="greeting">Hello 👋</h1>
-                <div class="search-box">
+                <!-- <div class="search-box">
                     <span>🔍</span>
                     <input type="text" placeholder="Search">
-                </div>
+                </div> -->
             </div>
 
             <!-- Stats Cards -->
@@ -396,12 +396,12 @@
 
             <!-- Candidate List Table -->
             <div class="table-container">
-                <div class="table-header">
+                <!-- <div class="table-header">
                     <h2>Candidate List</h2>
                     <button class="filter-btn">
                         ☰ Filter
                     </button>
-                </div>
+                </div> -->
 
                 <table>
                     <thead>
@@ -433,9 +433,9 @@
                             <td>{{ candidate.gender }}</td>
                             <td>{{ candidate.designation }}</td>
                             <td>{{ candidate.vote_count }}</td>
-                            <td>
+                            <!-- <td>
                                 <button class="details-btn" onclick="window.location.href='/admin/election/nomination/{{ candidate.id }}/change/'">Details</button>
-                            </td>
+                            </td> -->
                         </tr>
                         {% empty %}
                         <tr>
@@ -448,8 +448,8 @@
                 </table>
             </div>
 
-            <!-- Voter List Table -->
-            <div class="table-container">
+            <!-- Voter List Table
+            <!-- <div class="table-container">
                 <div class="table-header">
                     <h2>Voter List</h2>
                     <button class="filter-btn">
@@ -478,10 +478,10 @@
                             <td>{{ voter.gender }}</td>
                             <td>{{ voter.designation }}</td>
                             <td>{{ voter.workplace_address }}</td>
-                            <td>
+                            <!-- <td>
                                 <button class="details-btn" onclick="window.location.href='/admin/election/voter/{{ voter.id }}/change/'">Details</button>
-                            </td>
-                        </tr>
+                            </td> -->
+                        <!-- </tr>
                         {% empty %}
                         <tr>
                             <td colspan="7" style="text-align: center; padding: 2rem; color: #6b7280;">
@@ -490,8 +490,8 @@
                         </tr>
                         {% endfor %}
                     </tbody>
-                </table>
-            </div>
+                </table> --> 
+            </div> 
         </main>
     </div>
 </body>

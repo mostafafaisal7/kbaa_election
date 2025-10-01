@@ -8,9 +8,9 @@
 <div class="table-container">
     <div class="table-header">
         <h2>All Votes</h2>
-        <button class="filter-btn">
+        <!-- <button class="filter-btn">
             ☰ Filter
-        </button>
+        </button> -->
     </div>
 
     <table>
@@ -43,9 +43,9 @@
                     </div>
                 </td>
                 <td>{{ vote.created_at|date:"M d, Y H:i" }}</td>
-                <td>
+                <!-- <td>
                     <a href="/admin/election/vote/{{ vote.id }}/change/" class="details-btn">Details</a>
-                </td>
+                </td> -->
             </tr>
             {% empty %}
             <tr>

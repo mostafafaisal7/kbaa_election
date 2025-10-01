@@ -7,6 +7,9 @@ from .forms import NominationForm, VoteForm
 from .models import Session, Position, Voter, Nomination, Vote
 
 
+
+
+
 # --- Helper for vote counts ---
 def get_vote_counts(session, position):
     votes = (
@@ -16,6 +19,22 @@ def get_vote_counts(session, position):
     )
     return {v['nominee_id']: v['count'] for v in votes}
 
+
+
+def home(request):
+    """Home page with main navigation"""
+    current_session = Session.objects.filter(
+        status__in=['Nominations Open', 'Voting Open', 'Results Published']
+    ).first()
+    
+    context = {
+        'current_session': current_session,
+        'nomination_open': current_session and current_session.status == 'Nominations Open',
+        'voting_open': current_session and current_session.status == 'Voting Open',
+        'results_published': current_session and current_session.status == 'Results Published',
+    }
+    
+    return render(request, 'election/home.html', context)
 
 def nomination_view(request):
     # Get the current open nomination session
@@ -35,8 +54,8 @@ def nomination_view(request):
                 messages.error(request, "You have already submitted a nomination for this session.")
             else:
                 nomination.save()
-                messages.success(request, "Nomination submitted successfully!")
-                return redirect('nomination')
+                # Redirect to thank you page instead of showing message
+                return redirect('nomination_success')
     else:
         form = NominationForm()
 
@@ -44,6 +63,12 @@ def nomination_view(request):
         'form': form,
         'session': current_session
     })
+
+
+def nomination_success_view(request):
+    """Thank you page after successful nomination"""
+    return render(request, 'election/nomination_success.html')
+
 
 
 def get_next_available_position(session, positions, current_position):

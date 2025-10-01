@@ -8,9 +8,9 @@
 <div class="table-container">
     <div class="table-header">
         <h2>Voter List</h2>
-        <button class="filter-btn">
+        <!-- <button class="filter-btn">
             ☰ Filter
-        </button>
+        </button> -->
     </div>
 
     <table>
@@ -43,7 +43,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="/admin/election/voter/{{ voter.id }}/change/" class="details-btn">Details</a>
+                    <button class="details-btn" onclick="window.location.href='{% url 'admin_voter_detail' voter.id %}'">Details</button>
                 </td>
             </tr>
             {% empty %}

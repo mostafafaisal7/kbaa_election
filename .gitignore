@@ -1,5 +1,233 @@
 backend/media/candidate_photos/6893ab04810cbb879bc9d820-6893b7be810cbb879bca72af_XL7RtOD.jpg
 backend/media/candidate_photos/6893ab04810cbb879bc9d820-6893b7be810cbb879bca72af_EhdvL0G.jpg
+<<<<<<< HEAD
 backend/media/candidate_photos/68766e19c1a972173650dedb-68767df05269d8c2a1789dc2_0GFUnY3.jpg
 backend/media/candidate_photos/Corporate-Portraits-1783_hiBX3EV.jpg
+=======
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+virtualenv/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Django Static Files
+/staticfiles/
+/static/
+staticfiles/
+static_collected/
+
+# Media Files
+/media/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.svg
+*.pdf
+*.mp4
+*.avi
+
+# Exception: Keep default avatar if you have one
+!static/images/default-avatar.png
+
+# Django migrations (optional - uncomment if you want to ignore)
+# **/migrations/*.py
+# !**/migrations/__init__.py
+
+# Environment Variables
+.env
+.env.local
+.env.production
+.env.*.local
+*.env
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history
+
+# IDE - PyCharm
+.idea/
+*.iml
+*.iws
+.idea_modules/
+
+# IDE - Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Backup files
+*.bak
+*.swp
+*.swo
+*~
+*.backup
+
+# Testing
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+htmlcov/
+
+# Documentation
+docs/_build/
+site/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# pyenv
+.python-version
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+
+# Logs
+*.log
+logs/
+django_errors.log
+
+# Compiled files
+*.pyc
+__pycache__/
+
+# Local configuration
+local_settings.py
+
+# Passenger (cPanel deployment)
+passenger_wsgi.pyc
+tmp/
+
+# Collected static files
+/staticfiles/
+/static_root/
+
+# User uploaded files
+/media/candidate_photos/
+/media/uploads/
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+
+# Package files
+*.zip
+*.tar.gz
+*.rar
+
+# Node modules (if you use any frontend build tools)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Sensitive data
+secrets.json
+credentials.json
+*.key
+*.pem
+*.crt
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Cache
+.cache/
+*.cache
+
+# Session files
+django_session/
+
+# Custom project specific
+/backend/production_settings.py
+/config/production.pybackend/media/candidate_photos/68766e19c1a972173650dedb-68767df05269d8c2a1789dc2_0GFUnY3.jpg
+>>>>>>> v1.0.3
 backend/media/candidate_photos/Corporate-Portraits-1783.jpg
