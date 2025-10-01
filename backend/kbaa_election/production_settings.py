@@ -1,15 +1,65 @@
+# from .settings import *
+# import os
+
+# DEBUG = False
+# ALLOWED_HOSTS = ['abedintechemail.com', 'www.abedintechemail.com', '*']
+
+# # Use environment variable for SECRET_KEY
+# SECRET_KEY = os.environ.get('SECRET_KEY', SECRET_KEY)  # Falls back to settings.py
+
+# # Database - already using SQLite (no password needed)
+
+# # Security
+# SECURE_SSL_REDIRECT = False
+# SESSION_COOKIE_SECURE = False
+# CSRF_COOKIE_SECURE = False
+# SECURE_BROWSER_XSS_FILTER = True
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+# X_FRAME_OPTIONS = 'DENY'
+
+# # Logging
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'file': {
+#             'level': 'ERROR',
+#             'class': 'logging.FileHandler',
+#             'filename': BASE_DIR / 'django_errors.log',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['file'],
+#             'level': 'ERROR',
+#             'propagate': True,
+#         },
+#     },
+# }
+
+
+
+
 from .settings import *
 import os
 
-DEBUG = False
-ALLOWED_HOSTS = ['abedintechemail.com', 'www.abedintechemail.com', '*']
+# Read from environment variables
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# Use environment variable for SECRET_KEY
-SECRET_KEY = os.environ.get('SECRET_KEY', SECRET_KEY)  # Falls back to settings.py
+# Secret key from environment
+SECRET_KEY = os.environ.get('SECRET_KEY', SECRET_KEY)
 
-# Database - already using SQLite (no password needed)
+# Allowed hosts from environment
+ALLOWED_HOSTS_ENV = os.environ.get('ALLOWED_HOSTS', '')
+if ALLOWED_HOSTS_ENV:
+    ALLOWED_HOSTS = ALLOWED_HOSTS_ENV.split(',')
+else:
+    ALLOWED_HOSTS = ['abedintechemail.com', 'www.abedintechemail.com', '*']
 
-# Security
+# Database - SQLite (no environment variables needed)
+# Already configured in settings.py
+
+# Security (enable after SSL)
 SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
